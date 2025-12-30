@@ -1,0 +1,7 @@
+{
+  "name": "电车充电管家",
+  "description": "智能电车充电记录工具，支持拍照识别充电账单，追踪电量、时长、费用及余额，可视化消费趋势。",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
