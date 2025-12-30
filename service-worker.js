@@ -1,31 +1,19 @@
 
-const CACHE_NAME = 'ev-charge-v1';
-const ASSETS = [
+const CACHE_NAME = 'ev-charge-v2';
+// 只预缓存本地已知资源，避免跨域请求导致安装失败
+const PRE_CACHE_ASSETS = [
   './',
   './index.html',
-  './index.tsx',
-  './App.tsx',
-  './types.ts',
-  './manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(PRE_CACHE_ASSETS);
     })
   );
-});
-
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // 优先使用缓存，如果没有则请求网络
-      return response || fetch(event.request);
-    })
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -35,5 +23,27 @@ self.addEventListener('activate', (event) => {
         keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       );
     })
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+  // 对于 CDN 资源，采用网络优先，失败后尝试缓存
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // 如果请求成功且是 GET，存入缓存
+        if (response && response.status === 200 && event.request.method === 'GET') {
+          const cacheCopy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, cacheCopy);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // 网络失败时尝试从缓存读取
+        return caches.match(event.request);
+      })
   );
 });
