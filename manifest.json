@@ -1,0 +1,25 @@
+
+{
+  "short_name": "充电管家",
+  "name": "电车充电管家 - 智能追踪记录",
+  "description": "智能识别充电单据，轻松管理电车花费",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3054/3054889.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3054/3054889.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#10b981",
+  "background_color": "#f8fafc",
+  "lang": "zh-CN"
+}
